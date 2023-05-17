@@ -3,16 +3,21 @@ import { Routes, Route } from "react-router-dom";
 import Main from "./Main";
 import Login from "./Login";
 import Register from "./Register";
+import { ProtectedRoute } from "./ProtectedRoute";
 import PopupWithForm from "./PopupWithForm";
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
 import ImagePopup from "./ImagePopup";
+import InfoTooltip from "./InfoTooltip";
 import { api } from "../utils/Api";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
 function App() {
   //Добавление стейт-переменных
+  const [loggedIn, setLoggedIn] = React.useState(false);
+  const [userEmail, setUserEmail] = React.useState("");
+
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] =
     React.useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
@@ -21,6 +26,8 @@ function App() {
   const [selectedCard, setSelectedCard] = React.useState(null);
   const [currentUser, setCurrentUser] = React.useState({});
   const [cards, setCards] = React.useState([]);
+  const [isInfoTooltopOpen, setIsInfoTooltipOpen] = React.useState(false);
+  const [status, setStatus] = React.useState(true);
 
   //Получение начальных карточек
   React.useEffect(() => {
@@ -72,15 +79,23 @@ function App() {
   function handleAddPlaceClick() {
     setIsAddPlacePopupOpen(true);
   }
-
+  function handleRegistration(status) {
+    setStatus(status);
+    setIsInfoTooltipOpen(true);
+  }
   //Закрытие модальных окон
   function closeAllPopups() {
     setIsEditProfilePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setSelectedCard(null);
+    setIsInfoTooltipOpen(false);
   }
-
+  //Авторизация в приложении
+  function handleLogin(email) {
+    setLoggedIn(true);
+    setUserEmail(email);
+  }
   //Изменение информации о пользователе
   function handleUpdateUser(name, description) {
     api
@@ -140,20 +155,28 @@ function App() {
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <Routes>
-        <Route path="/" element={<Main     
+        <Route path="/" element={
+        
+        <ProtectedRoute 
+        element={Main} 
+        loggedIn={loggedIn}
         onEditProfile={handleEditProfileClick}
         onAddPlace={handleAddPlaceClick}
         onEditAvatar={handleEditAvatarClick}
         onCardClick={setSelectedCard}
         onCardLike={handleCardLike}
         onCardDelete={handleCardDelete}
-        cards={cards} />} />
+        cards={cards}
+         />}
+         />
+        
 
-        <Route path="/sign-in" element={<Login />} />
 
-        <Route path="/sign-up" element={<Register />} />
+        <Route path="/sign-in" element={<Login onLogin={handleLogin}/>} />
 
-     
+        <Route path="/sign-up" element={<Register onRegistration={handleRegistration} />} />
+
+
       </Routes>
       <ImagePopup
         card={selectedCard}
@@ -187,6 +210,14 @@ function App() {
         buttonTitle="Да"
         onClose={closeAllPopups}
       ></PopupWithForm>
+
+      <InfoTooltip
+        name="successful-action"
+        opacity="low"
+        isOpen={isInfoTooltopOpen}
+        onClose={closeAllPopups}
+        status={status}
+      />
     </CurrentUserContext.Provider>
   );
 }

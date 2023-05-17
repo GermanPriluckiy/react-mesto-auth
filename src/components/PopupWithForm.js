@@ -12,12 +12,12 @@ function PopupWithForm({
 }) {
   return (
     <div
-      className={`popup popup_opacity_${opacity} ${
-        isOpen ? "popup_opened" : ""
-      } `}
+      className={`popup popup_opacity_${opacity} ${isOpen ? "popup_opened" : ""
+        } `}
       id={`popup-${name}`}
     >
       <div className="popup__container">
+        <h2 className="popup__title">{title}</h2>
         <form
           className="popup__form"
           id={name}
@@ -25,7 +25,6 @@ function PopupWithForm({
           method="post"
           onSubmit={onSubmit}
         >
-          <h2 className="popup__form-title">{title}</h2>
           {children}
           <button
             className="popup__button"
@@ -34,13 +33,14 @@ function PopupWithForm({
           >
             {buttonTitle}
           </button>
-          <button
-            className="popup__button-close"
-            id={`${name}-button-close`}
-            type="button"
-            onClick={onClose}
-          ></button>
+
         </form>
+        <button
+          className="popup__button-close"
+          id={`${name}-button-close`}
+          type="button"
+          onClick={onClose}
+        ></button>
       </div>
     </div>
   );
