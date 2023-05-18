@@ -59,9 +59,11 @@ function App() {
     const isLiked = likes.some((i) => i._id === currentUser._id);
 
     // Отправляем запрос в API и получаем обновлённые данные карточки
-    api.changeLikeCardStatus(id, isLiked).then((newCard) => {
-      setCards((state) => state.map((c) => (c._id === id ? newCard : c)));
-    })
+    api
+      .changeLikeCardStatus(id, isLiked)
+      .then((newCard) => {
+        setCards((state) => state.map((c) => (c._id === id ? newCard : c)));
+      })
       .catch((err) => {
         console.log(err);
       });
@@ -155,28 +157,30 @@ function App() {
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <Routes>
-        <Route path="/" element={
-        
-        <ProtectedRoute 
-        element={Main} 
-        loggedIn={loggedIn}
-        onEditProfile={handleEditProfileClick}
-        onAddPlace={handleAddPlaceClick}
-        onEditAvatar={handleEditAvatarClick}
-        onCardClick={setSelectedCard}
-        onCardLike={handleCardLike}
-        onCardDelete={handleCardDelete}
-        cards={cards}
-         />}
-         />
-        
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute
+              element={Main}
+              loggedIn={loggedIn}
+              onEditProfile={handleEditProfileClick}
+              onAddPlace={handleAddPlaceClick}
+              onEditAvatar={handleEditAvatarClick}
+              onCardClick={setSelectedCard}
+              onCardLike={handleCardLike}
+              onCardDelete={handleCardDelete}
+              cards={cards}
+              userEmail={userEmail}
+            />
+          }
+        />
 
+        <Route path="/sign-in" element={<Login onLogin={handleLogin} />} />
 
-        <Route path="/sign-in" element={<Login onLogin={handleLogin}/>} />
-
-        <Route path="/sign-up" element={<Register onRegistration={handleRegistration} />} />
-
-
+        <Route
+          path="/sign-up"
+          element={<Register onRegistration={handleRegistration} />}
+        />
       </Routes>
       <ImagePopup
         card={selectedCard}
