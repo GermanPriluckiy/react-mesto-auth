@@ -17,3 +17,13 @@
     opacity: 0.85;
     cursor: pointer;
   }
+
+  @media screen and (max-width: 520px) {
+    .register__button {
+      width: 238px;
+      height: 46px;
+      margin: 0 auto 25px;
+      font-size: 14px;
+    }
+  
+  }

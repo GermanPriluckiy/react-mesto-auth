@@ -1,7 +1,7 @@
 import Success from "../images/Success.svg";
 import Denied from "../images/Denied.svg";
 
-function InfoTooltip({ name, opacity, isOpen, onClose, status }) {
+function InfoTooltip({ name, opacity, isOpen, onClose, isSuccessTooltipStatus }) {
   return (
     <div
       className={`popup popup_opacity_${opacity} ${
@@ -12,10 +12,10 @@ function InfoTooltip({ name, opacity, isOpen, onClose, status }) {
       <div className="popup__container">
         <div
           className="popup__image"
-          style={{ backgroundImage: `url(${status ? Success : Denied})` }}
+          style={{ backgroundImage: `url(${isSuccessTooltipStatus ? Success : Denied})` }}
         />
         <h2 className="popup__message">
-          {status
+          {isSuccessTooltipStatus
             ? "Вы успешно зарегистрировались!"
             : "Что-то пошло не так! Попробуйте ещё раз."}
         </h2>

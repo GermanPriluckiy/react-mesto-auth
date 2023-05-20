@@ -1,5 +1,6 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
+import Header from "./Header";
 import Main from "./Main";
 import Login from "./Login";
 import Register from "./Register";
@@ -26,32 +27,36 @@ function App() {
   const [selectedCard, setSelectedCard] = React.useState(null);
   const [currentUser, setCurrentUser] = React.useState({});
   const [cards, setCards] = React.useState([]);
-  const [isInfoTooltopOpen, setIsInfoTooltipOpen] = React.useState(false);
-  const [status, setStatus] = React.useState(true);
+  const [isInfoTooltipOpen, setIsInfoTooltipOpen] = React.useState(false);
+  const [isSuccessTooltipStatus, setIsSuccessTooltipStatus] = React.useState(true);
 
   //Получение начальных карточек
   React.useEffect(() => {
-    api
-      .getInitialCards()
-      .then((res) => {
-        setCards(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+    if (loggedIn) {
+      api
+        .getInitialCards()
+        .then((res) => {
+          setCards(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [loggedIn]);
 
   //Получение информации о пользователе
   React.useEffect(() => {
-    api
-      .getUserInfoFromServer()
-      .then((res) => {
-        setCurrentUser(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+    if (loggedIn) {
+      api
+        .getUserInfoFromServer()
+        .then((res) => {
+          setCurrentUser(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [loggedIn]);
 
   //Функция лайка/дизлайка карточки
   function handleCardLike(likes, id) {
@@ -81,8 +86,9 @@ function App() {
   function handleAddPlaceClick() {
     setIsAddPlacePopupOpen(true);
   }
-  function handleRegistration(status) {
-    setStatus(status);
+
+  function showPopupCheck(status) {
+    setIsSuccessTooltipStatus(status);
     setIsInfoTooltipOpen(true);
   }
   //Закрытие модальных окон
@@ -98,18 +104,22 @@ function App() {
     setLoggedIn(true);
     setUserEmail(email);
   }
+
+  //Выход из профиля
+  function handleLogout() {
+    localStorage.setItem("jwt", "");
+    setLoggedIn(false);
+  }
   //Изменение информации о пользователе
   function handleUpdateUser(name, description) {
     api
       .setUserInfo(name, description)
       .then((newInfo) => {
         setCurrentUser(newInfo);
+        closeAllPopups();
       })
       .catch((err) => {
         console.log(err);
-      })
-      .finally(() => {
-        closeAllPopups();
       });
   }
   //Изменение аватара
@@ -118,12 +128,10 @@ function App() {
       .updateAvatar(link)
       .then((newInfo) => {
         setCurrentUser(newInfo);
+        closeAllPopups();
       })
       .catch((err) => {
         console.log(err);
-      })
-      .finally(() => {
-        closeAllPopups();
       });
   }
 
@@ -133,12 +141,10 @@ function App() {
       .addNewCard(name, link)
       .then((newCard) => {
         setCards([newCard, ...cards]);
+        closeAllPopups();
       })
       .catch((err) => {
         console.log(err);
-      })
-      .finally(() => {
-        closeAllPopups();
       });
   }
 
@@ -156,9 +162,10 @@ function App() {
   }
   return (
     <CurrentUserContext.Provider value={currentUser}>
+      <Header userEmail={userEmail} onLogout={handleLogout} />
       <Routes>
         <Route
-          path="/"
+          path="/*"
           element={
             <ProtectedRoute
               element={Main}
@@ -175,11 +182,16 @@ function App() {
           }
         />
 
-        <Route path="/sign-in" element={<Login onLogin={handleLogin} />} />
+        <Route
+          path="/sign-in"
+          element={
+            <Login onLogin={handleLogin} showPopupCheck={showPopupCheck} />
+          }
+        />
 
         <Route
           path="/sign-up"
-          element={<Register onRegistration={handleRegistration} />}
+          element={<Register showPopupCheck={showPopupCheck} />}
         />
       </Routes>
       <ImagePopup
@@ -218,9 +230,9 @@ function App() {
       <InfoTooltip
         name="successful-action"
         opacity="low"
-        isOpen={isInfoTooltopOpen}
+        isOpen={isInfoTooltipOpen}
         onClose={closeAllPopups}
-        status={status}
+        isSuccessTooltipStatus={isSuccessTooltipStatus}
       />
     </CurrentUserContext.Provider>
   );

@@ -15,3 +15,9 @@
   .login__input:last-child {
     margin-bottom: 216px;
   }
+
+  @media screen and (max-width: 520px) {
+    .login__input {
+      width: 238px;
+    }
+  }

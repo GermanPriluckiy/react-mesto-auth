@@ -1,9 +1,8 @@
-import Header from "./Header";
 import React from "react";
 import { Link } from "react-router-dom";
 import { register } from "../utils/Auth";
 
-function Register({ onRegistration }) {
+function Register({ showPopupCheck }) {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
 
@@ -21,17 +20,16 @@ function Register({ onRegistration }) {
     register(email, password)
       .then((res) => {
         console.log(res);
-        onRegistration(true);
+        showPopupCheck(true);
       })
       .catch((err) => {
         console.log(err);
-        onRegistration(false);
+        showPopupCheck(false);
       });
   }
 
   return (
     <>
-      <Header linkName="Войти" routeName="/sign-in" />
       <div className="register">
         <div className="register__container">
           <h2 className="register__title">Регистрация</h2>

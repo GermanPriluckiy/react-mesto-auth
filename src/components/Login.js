@@ -1,9 +1,8 @@
-import Header from "./Header";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { authorize, getContent } from "../utils/Auth";
+import { authorize, checkToken } from "../utils/Auth";
 
-function Login({ onLogin }) {
+function Login({ onLogin, showPopupCheck }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -12,7 +11,7 @@ function Login({ onLogin }) {
   const tokenCheck = () => {
     const jwt = localStorage.getItem("jwt");
     if (jwt) {
-      getContent(jwt)
+      checkToken(jwt)
         .then((user) => {
           onLogin(user.data.email);
           navigate("/");
@@ -45,12 +44,12 @@ function Login({ onLogin }) {
       })
       .catch((err) => {
         console.log(err);
+        showPopupCheck(false);
       });
   }
 
   return (
     <>
-      <Header linkName="Регистрация" routeName="/sign-up" />
       <div className="login">
         <div className="login__container">
           <h2 className="login__title">Вход</h2>

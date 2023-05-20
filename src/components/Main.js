@@ -1,6 +1,5 @@
 import React from "react";
 import Card from "./Card";
-import Header from "./Header";
 import Footer from "./Footer";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
@@ -13,22 +12,11 @@ function Main({
   onCardLike,
   onCardDelete,
   cards,
-  userEmail,
 }) {
   const currentUser = React.useContext(CurrentUserContext);
 
-  function handleLogout() {
-    localStorage.setItem("jwt", "");
-  }
-
   return (
     <>
-      <Header
-        loggedIn={loggedIn}
-        onLogout={handleLogout}
-        routeName="/sign-in"
-        userEmail={userEmail}
-      />
       <main className="content">
         <section className="profile">
           <div className="profile__container">
